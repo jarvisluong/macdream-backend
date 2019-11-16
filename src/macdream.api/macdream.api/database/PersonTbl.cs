@@ -24,6 +24,7 @@ namespace macdream.api.database
 		[Reference]
 		public List<GoalTbl> Goals { get; set; } = new List<GoalTbl>();
 
-
-	}
+        [Reference]
+        public decimal Balance { get; set; }
+    }
 }

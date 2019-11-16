@@ -3,6 +3,7 @@ using macdream.api.database;
 using macdream.api.messages;
 using ServiceStack;
 using ServiceStack.OrmLite;
+using System;
 
 namespace macdream.api.endpoints
 {
@@ -35,16 +36,29 @@ namespace macdream.api.endpoints
 		{
 
 			// step 1 : try to load a user matching the requested user, they will own the new transaction
-			var person = Db.Select<PersonTbl>(p => p.Id == request.PersonId);
+            var person = Db.SingleById<PersonTbl>(request.PersonId);
 
-			if (person == null) throw HttpError.BadRequest("User wasnt found in db");
+            if (person == null) throw HttpError.BadRequest("User wasnt found in db");
 
+            if (person.Balance < request.Price) throw HttpError.BadRequest("User doesn't have enough money");
 
-			
-			return new InsertNewTransactionResponse
+            var newTransaction = new TransactionTbl
+            {
+                PersonId = request.PersonId,
+                Price = request.Price,
+                PaymentDt = request.PaymentDt,
+                VisaMcc = request.VisaMcc,
+                Description = request.Description
+            };
+
+            Db.UpdateOnly(() => new PersonTbl { Balance = person.Balance - request.Price }, p => p.Id == person.Id);
+            var newTransactionId = Db.Insert(newTransaction, true);
+
+            return new InsertNewTransactionResponse
 			{
-				// TODO use hte ~Request json to build up a db record, insert the new transaction and return the id to the UI
-			};
+				// return the id to the UI
+                   NewTransactionId = newTransactionId
+            };
 		}
 
 	}
