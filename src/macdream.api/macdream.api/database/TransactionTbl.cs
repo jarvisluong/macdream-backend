@@ -13,15 +13,15 @@ namespace macdream.api.database
 		[References(typeof(PersonTbl))]
 		public long PersonId { get; set; }
 
+        [References(typeof(VisaMccTbl))]
+        public long VisaMccId { get; set; }
+
+
 		[Required]
 		public DateTime PaymentDt { get; set; }
 
 
 		public decimal Price { get; set; }
-
-		[Required]
-		//[StringLength(4, 4)]
-		public VisaMccEnum VisaMcc { get; set; } = VisaMccEnum.Missing;
 
 
 		[StringLength(1, 255)]

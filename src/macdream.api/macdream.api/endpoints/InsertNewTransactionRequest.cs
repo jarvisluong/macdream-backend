@@ -13,7 +13,7 @@ namespace macdream.api.endpoints
 
         public decimal Price { get; set; }
 
-        public VisaMccEnum VisaMcc { get; set; } = VisaMccEnum.Missing;
+        public long VisaMccId { get; set; }
 
         public string Description { get; set; }
     }

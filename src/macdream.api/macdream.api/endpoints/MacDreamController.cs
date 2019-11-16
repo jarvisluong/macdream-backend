@@ -32,6 +32,26 @@ namespace macdream.api.endpoints
 			};
 		}
 
+        public UpdateVisaMccResponse Put(UpdateVisaMccRequest request)
+        {
+            using (var dbTransaction = Db.OpenTransaction())
+            {
+                var visaMcc = Db.SingleById<VisaMccTbl>(request.VisaMccId);
+                if (visaMcc == null) throw HttpError.BadRequest("VisaMcc not found");
+
+                Db.UpdateOnly(() => new VisaMccTbl { isSaving = request.isSaving}, v => v.Id == request.VisaMccId);
+
+                dbTransaction.Commit();
+
+                return new UpdateVisaMccResponse
+                {
+                    VisaMccId = visaMcc.Id,
+                    isSaving = request.isSaving,
+                    VisaMcc = visaMcc.VisaMcc
+                };
+            }
+        }
+
         public UpdateGoalResponse Put(UpdateGoalRequest request)
         {
             using (var dbTransaction = Db.OpenTransaction())
@@ -69,19 +89,20 @@ namespace macdream.api.endpoints
 			{
 				// step 1 : try to load a user matching the requested user, they will own the new transaction
 				var person = Db.SingleById<PersonTbl>(request.PersonId);
-
 				if (person == null) throw HttpError.BadRequest("User wasnt found in db");
-
 				if (person.Balance < request.Price) throw HttpError.BadRequest("User doesn't have enough money");
+
+                var visaMcc = Db.SingleById<VisaMccTbl>(request.VisaMccId);
+                if (visaMcc == null) throw HttpError.BadRequest("VisaMcc not found");
 
 				var newTransaction = new TransactionTbl
 				{
 					PersonId = request.PersonId,
 					Price = request.Price,
 					PaymentDt = request.PaymentDt,
-					VisaMcc = request.VisaMcc,
-					Description = request.Description
-				};
+					Description = request.Description,
+                    VisaMccId = visaMcc.Id
+                };
 
 				Db.UpdateOnly(() => new PersonTbl { Balance = person.Balance - request.Price }, p => p.Id == person.Id);
 				var newTransactionId = Db.Insert(newTransaction, true);
