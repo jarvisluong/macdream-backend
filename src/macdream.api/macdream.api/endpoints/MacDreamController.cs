@@ -6,7 +6,7 @@ using ServiceStack.OrmLite;
 
 namespace macdream.api.endpoints
 {
-	public class MacDreamServices : Service
+	public class MacDreamController : Service
 	{
 		public GetAllThePeopleAndTransactionsResponse Get(GetAllThePeopleAndTransactionsRequest request)
 		{
@@ -18,7 +18,7 @@ namespace macdream.api.endpoints
 
 			return new GetAllThePeopleAndTransactionsResponse
 			{
-				People = persons.Map(p => new PersonDto
+				People = persons.Map(p => new PersonJson
 				{
 					Id = p.Id,
 					Name = p.Name,
@@ -28,6 +28,22 @@ namespace macdream.api.endpoints
 						PaymentDt = t.PaymentDt
 					})
 				})
+			};
+		}
+
+		public InsertNewTransactionResponse Post(InsertNewTransactionRequest request)
+		{
+
+			// step 1 : try to load a user matching the requested user, they will own the new transaction
+			var person = Db.Select<PersonTbl>(p => p.Id == request.PersonId);
+
+			if (person == null) throw HttpError.BadRequest("User wasnt found in db");
+
+
+			
+			return new InsertNewTransactionResponse
+			{
+				// TODO use hte ~Request json to build up a db record, insert the new transaction and return the id to the UI
 			};
 		}
 

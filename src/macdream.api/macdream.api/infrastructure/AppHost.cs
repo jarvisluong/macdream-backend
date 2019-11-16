@@ -6,7 +6,7 @@ namespace macdream.api.infrastructure
 {
 	public class AppHost : AppHostBase
 	{
-		public AppHost() : base("macdream thingy", typeof(MacDreamServices).Assembly)
+		public AppHost() : base("macdream thingy", typeof(MacDreamController).Assembly)
 		{
 		}
 

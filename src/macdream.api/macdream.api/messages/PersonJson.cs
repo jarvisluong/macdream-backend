@@ -2,7 +2,7 @@
 
 namespace macdream.api.messages
 {
-	public class PersonDto
+	public class PersonJson
 	{
 		public long Id { get; set; }
 

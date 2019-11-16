@@ -4,6 +4,6 @@ namespace macdream.api.messages
 {
 	public class GetAllThePeopleAndTransactionsResponse 
 	{
-		public List<PersonDto> People { get; set; }
+		public List<PersonJson> People { get; set; }
 	}
 }
