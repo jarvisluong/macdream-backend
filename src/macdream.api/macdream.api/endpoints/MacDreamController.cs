@@ -34,31 +34,40 @@ namespace macdream.api.endpoints
 
 		public InsertNewTransactionResponse Post(InsertNewTransactionRequest request)
 		{
-
-			// step 1 : try to load a user matching the requested user, they will own the new transaction
-            var person = Db.SingleById<PersonTbl>(request.PersonId);
-
-            if (person == null) throw HttpError.BadRequest("User wasnt found in db");
-
-            if (person.Balance < request.Price) throw HttpError.BadRequest("User doesn't have enough money");
-
-            var newTransaction = new TransactionTbl
-            {
-                PersonId = request.PersonId,
-                Price = request.Price,
-                PaymentDt = request.PaymentDt,
-                VisaMcc = request.VisaMcc,
-                Description = request.Description
-            };
-
-            Db.UpdateOnly(() => new PersonTbl { Balance = person.Balance - request.Price }, p => p.Id == person.Id);
-            var newTransactionId = Db.Insert(newTransaction, true);
-
-            return new InsertNewTransactionResponse
+			// by wrapping all the db operations in a transaction, we can be sure that BOTH the Person+Transaction
+			// tables will be updated correctly, or NONE of them will... db transaction keeps our database state
+			// consistent
+			using (var dbTransaction = Db.OpenTransaction())
 			{
-				// return the id to the UI
-                   NewTransactionId = newTransactionId
-            };
+				// step 1 : try to load a user matching the requested user, they will own the new transaction
+				var person = Db.SingleById<PersonTbl>(request.PersonId);
+
+				if (person == null) throw HttpError.BadRequest("User wasnt found in db");
+
+				if (person.Balance < request.Price) throw HttpError.BadRequest("User doesn't have enough money");
+
+				var newTransaction = new TransactionTbl
+				{
+					PersonId = request.PersonId,
+					Price = request.Price,
+					PaymentDt = request.PaymentDt,
+					VisaMcc = request.VisaMcc,
+					Description = request.Description
+				};
+
+				Db.UpdateOnly(() => new PersonTbl { Balance = person.Balance - request.Price }, p => p.Id == person.Id);
+				var newTransactionId = Db.Insert(newTransaction, true);
+
+				dbTransaction.Commit();
+
+				return new InsertNewTransactionResponse
+				{
+					// return the id to the UI
+					NewTransactionId = newTransactionId
+				};
+			}
+
+			
 		}
 
 	}
