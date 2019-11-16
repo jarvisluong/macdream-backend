@@ -107,6 +107,20 @@ namespace macdream.api.endpoints
 				Db.UpdateOnly(() => new PersonTbl { Balance = person.Balance - request.Price }, p => p.Id == person.Id);
 				var newTransactionId = Db.Insert(newTransaction, true);
 
+                if (visaMcc.isSaving) {
+                    var amount = 0.1m * request.Price;
+                    if (person.Balance < amount) {
+                        amount = person.Balance;
+                    }
+
+                    // TODO: hardcode Goal ID is 3
+                    var goal = Db.SingleById<GoalTbl>(3);
+                    if (goal == null) throw HttpError.BadRequest("Goal wasn't found in db");
+
+                    Db.UpdateOnly(() => new GoalTbl { Saving = goal.Saving + amount }, g => g.Id == goal.Id);
+                    Db.UpdateOnly(() => new PersonTbl { Balance = person.Balance - amount }, p => p.Id == request.PersonId);
+                }
+
 				dbTransaction.Commit();
 
 				return new InsertNewTransactionResponse
