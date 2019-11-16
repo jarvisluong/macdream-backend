@@ -6,5 +6,6 @@
 
         public decimal SavingAmount { get; set; }
 
+        public long GoalId { get; set; }
     }
 }
