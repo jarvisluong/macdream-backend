@@ -20,7 +20,7 @@ namespace macdream.api.infrastructure
 				db.CreateTableIfNotExists<GoalTbl>();
 
 				{
-					var person1 = new PersonTbl { Name = "Charlie Chapman"};
+					var person1 = new PersonTbl { Name = "Charlie Chapman", Balance = 10000m};
 					person1.Id = db.Insert(person1, true);
 
 					var goal1 = new GoalTbl
@@ -57,32 +57,32 @@ namespace macdream.api.infrastructure
 					};
 					db.Insert(goal3);
 
-					InjectSampleTransaction(db, person1.Id, 60, VisaMccEnum.Alcohol, "Beer");
-					InjectSampleTransaction(db, person1.Id, 60, VisaMccEnum.Alcohol, "Beer");
-					InjectSampleTransaction(db, person1.Id, 60, VisaMccEnum.Alcohol, "Beer");
-					InjectSampleTransaction(db, person1.Id, 60, VisaMccEnum.Alcohol, "Beer");
-					InjectSampleTransaction(db, person1.Id, 60, VisaMccEnum.Alcohol, "Beer");
-					InjectSampleTransaction(db, person1.Id, 60, VisaMccEnum.Alcohol, "Beer");
-					InjectSampleTransaction(db, person1.Id, 60, VisaMccEnum.Food, "Skittles");
-					InjectSampleTransaction(db, person1.Id, 60, VisaMccEnum.Food, "Skittles");
-					InjectSampleTransaction(db, person1.Id, 60, VisaMccEnum.Food, "Skittles");
-					InjectSampleTransaction(db, person1.Id, 60, VisaMccEnum.Food, "Skittles");
-					InjectSampleTransaction(db, person1.Id, 60, VisaMccEnum.Food, "Skittles");
-					InjectSampleTransaction(db, person1.Id, 60, VisaMccEnum.Food, "Skittles");
-					InjectSampleTransaction(db, person1.Id, 60, VisaMccEnum.Coffee, "Latte");
-					InjectSampleTransaction(db, person1.Id, 60, VisaMccEnum.Coffee, "Latte");
-					InjectSampleTransaction(db, person1.Id, 60, VisaMccEnum.Coffee, "Latte");
-					InjectSampleTransaction(db, person1.Id, 60, VisaMccEnum.Coffee, "Latte");
-					InjectSampleTransaction(db, person1.Id, 60, VisaMccEnum.Coffee, "Latte");
-					InjectSampleTransaction(db, person1.Id, 60, VisaMccEnum.Coffee, "Latte");
-					InjectSampleTransaction(db, person1.Id, 60, VisaMccEnum.Coffee, "Latte");
-					InjectSampleTransaction(db, person1.Id, 60, VisaMccEnum.Rent, "Rent");
-					InjectSampleTransaction(db, person1.Id, 30, VisaMccEnum.Rent, "Rent");
-					InjectSampleTransaction(db, person1.Id, 0, VisaMccEnum.Rent, "Rent");
-					InjectSampleTransaction(db, person1.Id, 27, VisaMccEnum.Electronics, "Mobile charger cable");
-					InjectSampleTransaction(db, person1.Id, 13, VisaMccEnum.Electronics, "Gamer mouse");
-					InjectSampleTransaction(db, person1.Id, 56, VisaMccEnum.Electronics, "Steam subscription");
-					InjectSampleTransaction(db, person1.Id, 56, VisaMccEnum.Electronics, "Call of Duty game subscription");
+					InjectSampleTransaction(db, person1.Id, 60, VisaMccEnum.Alcohol, "Beer", 10);
+					InjectSampleTransaction(db, person1.Id, 60, VisaMccEnum.Alcohol, "Beer", 9);
+					InjectSampleTransaction(db, person1.Id, 60, VisaMccEnum.Alcohol, "Beer", 8);
+					InjectSampleTransaction(db, person1.Id, 60, VisaMccEnum.Alcohol, "Beer", 11);
+					InjectSampleTransaction(db, person1.Id, 60, VisaMccEnum.Alcohol, "Beer", 12);
+					InjectSampleTransaction(db, person1.Id, 60, VisaMccEnum.Alcohol, "Beer", 9);
+					InjectSampleTransaction(db, person1.Id, 60, VisaMccEnum.Food, "Skittles", 3.5m);
+					InjectSampleTransaction(db, person1.Id, 60, VisaMccEnum.Food, "Skittles", 3.5m);
+					InjectSampleTransaction(db, person1.Id, 60, VisaMccEnum.Food, "Skittles", 3.5m);
+					InjectSampleTransaction(db, person1.Id, 60, VisaMccEnum.Food, "Skittles", 3.5m);
+                    InjectSampleTransaction(db, person1.Id, 60, VisaMccEnum.Food, "Skittles", 3.5m);
+                    InjectSampleTransaction(db, person1.Id, 60, VisaMccEnum.Food, "Skittles", 3.5m);
+					InjectSampleTransaction(db, person1.Id, 60, VisaMccEnum.Coffee, "Latte", 5);
+					InjectSampleTransaction(db, person1.Id, 60, VisaMccEnum.Coffee, "Latte", 4.5m);
+					InjectSampleTransaction(db, person1.Id, 60, VisaMccEnum.Coffee, "Latte", 5.5m);
+					InjectSampleTransaction(db, person1.Id, 60, VisaMccEnum.Coffee, "Latte", 4);
+					InjectSampleTransaction(db, person1.Id, 60, VisaMccEnum.Coffee, "Latte", 5);
+					InjectSampleTransaction(db, person1.Id, 60, VisaMccEnum.Coffee, "Latte", 4);
+					InjectSampleTransaction(db, person1.Id, 60, VisaMccEnum.Coffee, "Latte", 5.5m);
+					InjectSampleTransaction(db, person1.Id, 60, VisaMccEnum.Rent, "Rent", 200);
+					InjectSampleTransaction(db, person1.Id, 30, VisaMccEnum.Rent, "Rent", 250);
+					InjectSampleTransaction(db, person1.Id, 0, VisaMccEnum.Rent, "Rent", 300);
+					InjectSampleTransaction(db, person1.Id, 27, VisaMccEnum.Electronics, "Mobile charger cable", 12);
+					InjectSampleTransaction(db, person1.Id, 13, VisaMccEnum.Electronics, "Gamer mouse", 22.5m);
+					InjectSampleTransaction(db, person1.Id, 56, VisaMccEnum.Electronics, "Steam subscription", 15);
+					InjectSampleTransaction(db, person1.Id, 56, VisaMccEnum.Electronics, "Call of Duty game subscription", 18);
 				}
 
 				
@@ -93,16 +93,22 @@ namespace macdream.api.infrastructure
 		}
 
 		private static void InjectSampleTransaction(
-			IDbConnection db, long personId, int daysAgo, VisaMccEnum visaMcc, string description)
+			IDbConnection db, long personId, int daysAgo, VisaMccEnum visaMcc, string description, decimal price)
 		{
 			var transaction1 = new TransactionTbl
 			{
 				PaymentDt = DateTime.Today.AddDays(-daysAgo),
 				PersonId = personId,
 				VisaMcc = visaMcc,
-				Description = description
+				Description = description,
+                Price = price
 			};
-			db.Insert(transaction1);
+
+            var person = db.SingleById<PersonTbl>(personId);
+            if (person == null || person.Balance < price) return;
+
+            db.UpdateOnly(() => new PersonTbl { Balance = person.Balance - price }, p => p.Id == person.Id);
+            db.Insert(transaction1);
 		}
 
 	}

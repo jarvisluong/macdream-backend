@@ -40,14 +40,18 @@ namespace macdream.api.endpoints
 
             if (person == null) throw HttpError.BadRequest("User wasnt found in db");
 
+            if (person.Balance < request.Price) throw HttpError.BadRequest("User doesn't have enough money");
+
             var newTransaction = new TransactionTbl
             {
-                PaymentDt = request.PaymentDt,
                 PersonId = request.PersonId,
+                Price = request.Price,
+                PaymentDt = request.PaymentDt,
                 VisaMcc = request.VisaMcc,
                 Description = request.Description
             };
 
+            Db.UpdateOnly(() => new PersonTbl { Balance = person.Balance - request.Price }, p => p.Id == person.Id);
             var newTransactionId = Db.Insert(newTransaction, true);
 
             return new InsertNewTransactionResponse
