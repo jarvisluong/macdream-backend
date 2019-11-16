@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Funq;
 using ServiceStack;
 using ServiceStack.Admin;
@@ -6,6 +7,8 @@ using ServiceStack.Api.OpenApi;
 using ServiceStack.Data;
 using ServiceStack.Logging;
 using ServiceStack.OrmLite;
+using ServiceStack.Text;
+using ServiceStack.Text.Common;
 using ServiceStack.Validation;
 
 namespace macdream.api.infrastructure
@@ -27,6 +30,12 @@ namespace macdream.api.infrastructure
 				StrictMode = true
 			});
             
+			JsConfig<DateTime>.SerializeFn = time => new DateTime(time.Ticks, DateTimeKind.Utc).ToString(DateTimeSerializer.XsdDateTimeFormatSeconds);
+			JsConfig<DateTime?>.SerializeFn =
+				time => time != null
+					? new DateTime(time.Value.Ticks, DateTimeKind.Utc).ToString(DateTimeSerializer.XsdDateTimeFormatSeconds)
+					: null;
+
 			host.Plugins.Add(new ValidationFeature());
 
 			host.Plugins.Add(new AutoQueryFeature { MaxLimit = 100 });
