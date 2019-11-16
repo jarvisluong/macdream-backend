@@ -23,7 +23,8 @@ namespace macdream.api.database
 		[Required]
 		public GoalTypeEnum GoalType { get; set; }
 
-		public decimal Price { get; set; } = 2500.0m;
+        public decimal Saving { get; set; } = 0;
+        public decimal Price { get; set; }
 
 		[StringLength(1, 100)]
 		public string Name { get; set; } = "macbook pro";

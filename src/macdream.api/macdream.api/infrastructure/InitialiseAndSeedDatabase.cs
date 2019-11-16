@@ -51,7 +51,6 @@ namespace macdream.api.infrastructure
 						GoalType = GoalTypeEnum.Investing,
 						Name = "S&P500 ETF",
 						PersonId = person1.Id,
-						Price = 2000.0m,
 						TargetDt = DateTime.Today.AddDays(12 * 30),
 						Description = "I want to invest in a shares index fund"
 					};

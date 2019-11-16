@@ -32,6 +32,34 @@ namespace macdream.api.endpoints
 			};
 		}
 
+        public UpdateGoalResponse Put(UpdateGoalRequest request)
+        {
+            using (var dbTransaction = Db.OpenTransaction())
+            {
+                var person = Db.SingleById<PersonTbl>(request.PersonId);
+                if (person == null) throw HttpError.BadRequest("User wasnt found in db");
+
+                var goal = Db.SingleById<GoalTbl>(request.GoalId);
+                if (goal == null) throw HttpError.BadRequest("Goal wasn't found in db");
+
+                if (person.Balance < request.Amount) throw HttpError.BadRequest("User doesn't have enought money");
+
+                Db.UpdateOnly(() => new GoalTbl { Saving = goal.Saving + request.Amount }, g => g.Id == request.GoalId);
+                Db.UpdateOnly(() => new PersonTbl { Balance = person.Balance - request.Amount }, p => p.Id == request.PersonId);
+
+                dbTransaction.Commit();
+
+                return new UpdateGoalResponse
+                {
+                    // return the goal saving response
+                    GoalId = goal.Id,
+                    GoalSaving = goal.Saving + request.Amount,
+                    GoalPrice = goal.Price,
+                    GoalAchieved = goal.Price != 0 && goal.Saving + request.Amount >= goal.Price
+                };
+            }
+        }
+
 		public InsertNewTransactionResponse Post(InsertNewTransactionRequest request)
 		{
 			// by wrapping all the db operations in a transaction, we can be sure that BOTH the Person+Transaction
