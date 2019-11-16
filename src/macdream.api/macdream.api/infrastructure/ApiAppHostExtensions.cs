@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Funq;
-using macdream.api.database;
 using ServiceStack;
 using ServiceStack.Admin;
 using ServiceStack.Api.OpenApi;
@@ -63,38 +61,8 @@ namespace macdream.api.infrastructure
 			container.Register<IDbConnectionFactory>(c => 
 				new OrmLiteConnectionFactory(":memory:", SqliteDialect.Provider)); //InMemory Sqlite DB
 
-			BuildDatabase(container);
+			InitialiseAndSeedDatabase.BuildDatabase(container);
 			
-		}
-
-
-		private static void BuildDatabase(Container container)
-		{
-			var dbFactory = container.Resolve<IDbConnectionFactory>();
-
-			using (var db = dbFactory.Open())
-			{
-				db.CreateTableIfNotExists<PersonTbl>();
-				db.CreateTableIfNotExists<TransactionTbl>();
-
-				{
-					var person1 = new PersonTbl { Name = "The Dude 1"};
-					person1.Id = db.Insert(person1, true);
-
-					var transaction1 = new TransactionTbl
-					{
-						PaymentDt = DateTime.Today.AddDays(-60),
-						PersonId = person1.Id,
-						Description = "Beer"
-					};
-					db.Insert(transaction1);
-				}
-
-				
-
-				//var result = db.SingleById<Poco>(1);
-				//result.PrintDump(); //= {Id: 1, Name:Seed Data}
-			}
 		}
 	}
 }

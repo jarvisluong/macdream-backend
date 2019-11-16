@@ -1,5 +1,4 @@
-﻿using macdream.api.database;
-using ServiceStack;
+﻿using ServiceStack;
 
 namespace macdream.api.messages
 {
@@ -10,11 +9,4 @@ namespace macdream.api.messages
 	{
 		
 	}
-
-
-	[Route("/autoquery/persons")]
-	public class QueryPersons : QueryDb<PersonTbl> { }
-
-	[Route("/autoquery/transactions")]
-	public class QueryTransactions : QueryDb<TransactionTbl> { }
 }
