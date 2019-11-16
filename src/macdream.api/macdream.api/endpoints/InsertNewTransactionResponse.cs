@@ -3,5 +3,8 @@
 	public class InsertNewTransactionResponse
 	{
 		public long NewTransactionId { get; set; }
-	}
+
+        public decimal SavingAmount { get; set; }
+
+    }
 }
