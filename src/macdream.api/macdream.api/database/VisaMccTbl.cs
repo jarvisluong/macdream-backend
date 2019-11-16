@@ -10,7 +10,6 @@ namespace macdream.api.database
 		public long Id { get; set; }
 
 		[Required]
-		//[StringLength(4, 4)]
 		public VisaMccEnum VisaMcc { get; set; } = VisaMccEnum.Missing;
 
         public bool isSaving { get; set; } = false;
