@@ -1,9 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Funq;
+using macdream.api.database;
 using ServiceStack;
 using ServiceStack.Admin;
 using ServiceStack.Api.OpenApi;
+using ServiceStack.Data;
 using ServiceStack.Logging;
+using ServiceStack.OrmLite;
 using ServiceStack.Validation;
 
 namespace macdream.api.infrastructure
@@ -13,8 +17,6 @@ namespace macdream.api.infrastructure
 
 		public static void ConfigureApiAppHostContainer(this ServiceStackHost host, Container container)
 		{
-			//var debugMode = AppSettings.Get(nameof(HostConfig.DebugMode), HostingEnvironment.IsDevelopment());
-
 			host.SetConfig(new HostConfig
 			{
 				DebugMode = true,
@@ -53,54 +55,46 @@ namespace macdream.api.infrastructure
 				var logger = LogManager.GetLogger(httpRequest.GetType());
 				logger.Error(requestMessage, ex);
 
-				/*
-				//return null; //continue with default Error Handling
-
-				//object customExceptionDto = null;
-				//if (exception is BusinessException businessException) customExceptionDto = businessException.ConvertTo<object>();
-
-				// or return your own custom response
-				//var customResponse = DtoUtils.CreateErrorResponse(customExceptionDto, exception);
-				//return customResponse;*/
-
 				return DtoUtils.CreateErrorResponse(requestMessage, ex);
 			});
 
 
+
+			container.Register<IDbConnectionFactory>(c => 
+				new OrmLiteConnectionFactory(":memory:", SqliteDialect.Provider)); //InMemory Sqlite DB
+
+			BuildDatabase(container);
 			
-			//// Had to comment this out so that our rate limit exceptions don't get wrapped up into 200s
-			//// Handle Unhandled Exceptions occurring outside of Services
-			//// E.g. Exceptions during Request binding or in filters:
-			//host.UncaughtExceptionHandlers.Add((httpRequest, httpResponse, operationName, ex) =>
-			//{
-
-			//	// In addition to any RequestLogger exception logging (such as that provided by Rollbar feature),
-			//	// we can use application logging to record details of uncaught exceptions here.
-			//	//var logger = LogManager.GetLogger(httpRequest.GetType());
-			//	//logger.Error(httpRequest, ex);
-
-			//	//var debugMode = settings.DebugMode;
-			//	//if (debugMode)
-			//	//{
-			//	//	httpResponse.WriteAsync("Error: {0}: {1} : {2}".Fmt(ex.GetType().Name, ex.Message, ex.StackTrace));
-			//	//	httpResponse.WriteAsync("Error: {0}".Fmt(ex.StackTrace));
-			//	//}
-			//	//else
-			//	//{
-			//	//	httpResponse.WriteAsync(
-			//	//		"Uncaught Exception Error occurred outside of Services: {0}: {1}".Fmt(ex.GetType().Name,
-			//	//			ex.Message));
-			//	//}
-
-			//	//httpResponse.EndRequest(true);
-			//});
-
-
-			//if (Config.DebugMode)
-			//{
-			//	Plugins.Add(new HotReloadFeature());
-			//}
 		}
 
+
+		private static void BuildDatabase(Container container)
+		{
+			var dbFactory = container.Resolve<IDbConnectionFactory>();
+
+			using (var db = dbFactory.Open())
+			{
+				db.CreateTableIfNotExists<PersonTbl>();
+				db.CreateTableIfNotExists<TransactionTbl>();
+
+				{
+					var person1 = new PersonTbl { Name = "The Dude 1"};
+					person1.Id = db.Insert(person1, true);
+
+					var transaction1 = new TransactionTbl
+					{
+						PaymentDt = DateTime.Today.AddDays(-60),
+						PersonId = person1.Id,
+						Description = "Beer"
+					};
+					db.Insert(transaction1);
+				}
+
+				
+
+				//var result = db.SingleById<Poco>(1);
+				//result.PrintDump(); //= {Id: 1, Name:Seed Data}
+			}
+		}
 	}
 }

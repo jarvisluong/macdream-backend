@@ -16,7 +16,9 @@ namespace macdream.api.infrastructure
 
 			this.ConfigureApiAppHostContainer(container);
 
-
+			
 		}
+
+		
 	}
 }
