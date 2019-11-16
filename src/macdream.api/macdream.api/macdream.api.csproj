@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <UserSecretsId>383ad650-2d76-4c54-8218-4dd5917f8855</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.9.5" />
+    <PackageReference Include="ServiceStack" Version="5.7.0" />
+    <PackageReference Include="ServiceStack.Admin" Version="5.7.0" />
+    <PackageReference Include="ServiceStack.Api.OpenApi" Version="5.7.0" />
+    <PackageReference Include="ServiceStack.Api.Swagger" Version="5.7.0" />
+    <PackageReference Include="ServiceStack.Interfaces" Version="5.7.0" />
+    <PackageReference Include="ServiceStack.OrmLite" Version="5.7.0" />
+    <PackageReference Include="ServiceStack.OrmLite.Sqlite" Version="5.7.0" />
+    <PackageReference Include="ServiceStack.Server" Version="5.7.0" />
+    <PackageReference Include="ServiceStack.Text" Version="5.7.0" />
+  </ItemGroup>
+
+</Project>
