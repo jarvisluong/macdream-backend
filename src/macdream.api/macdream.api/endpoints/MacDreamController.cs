@@ -109,6 +109,8 @@ namespace macdream.api.endpoints
 
                 var savingAmount = 0m;
 
+                long goalId = -1;
+
                 if (visaMcc.isSaving) {
                     savingAmount = 0.1m * request.Price;
                     if (person.Balance < savingAmount) {
@@ -118,6 +120,7 @@ namespace macdream.api.endpoints
                     // TODO: hardcode Goal ID is 3
                     var goal = Db.SingleById<GoalTbl>(3);
                     if (goal == null) throw HttpError.BadRequest("Goal wasn't found in db");
+                    goalId = goal.Id;
 
                     Db.UpdateOnly(() => new GoalTbl { Saving = goal.Saving + savingAmount }, g => g.Id == goal.Id);
                     Db.UpdateOnly(() => new PersonTbl { Balance = person.Balance - savingAmount }, p => p.Id == request.PersonId);
@@ -129,7 +132,8 @@ namespace macdream.api.endpoints
 				{
 					// return the id to the UI
 					NewTransactionId = newTransactionId,
-                    SavingAmount = savingAmount
+                    SavingAmount = savingAmount,
+                    GoalId = goalId
                 };
 			}
 
