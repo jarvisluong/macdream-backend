@@ -17,4 +17,5 @@ RUN dotnet publish "macdream.api.csproj" -c Release -o /app/publish
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "macdream.api.dll"]
+# Heroku expects CMD and not ENTRYPOINT
+CMD ["dotnet", "macdream.api.dll"]
