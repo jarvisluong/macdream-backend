@@ -39,14 +39,17 @@ namespace macdream.api.endpoints
                 var visaMcc = Db.SingleById<VisaMccTbl>(request.VisaMccId);
                 if (visaMcc == null) throw HttpError.BadRequest("VisaMcc not found");
 
-                Db.UpdateOnly(() => new VisaMccTbl { isSaving = request.isSaving}, v => v.Id == request.VisaMccId);
+                //Db.UpdateOnly(() => new VisaMccTbl { isSaving = request.isSaving}, v => v.Id == request.VisaMccId);
+
+                visaMcc.isSaving = request.isSaving;
+                Db.Update(visaMcc);
 
                 dbTransaction.Commit();
 
                 return new UpdateVisaMccResponse
                 {
                     VisaMccId = visaMcc.Id,
-                    isSaving = request.isSaving,
+                    isSaving = visaMcc.isSaving,
                     VisaMcc = visaMcc.VisaMcc
                 };
             }
@@ -64,7 +67,11 @@ namespace macdream.api.endpoints
 
                 if (person.Balance < request.Amount) throw HttpError.BadRequest("User doesn't have enought money");
 
-                Db.UpdateOnly(() => new GoalTbl { Saving = goal.Saving + request.Amount }, g => g.Id == request.GoalId);
+                Db.UpdateOnly(() => new GoalTbl
+                {
+	                Saving = goal.Saving + request.Amount,
+					
+                }, g => g.Id == request.GoalId);
                 Db.UpdateOnly(() => new PersonTbl { Balance = person.Balance - request.Amount }, p => p.Id == request.PersonId);
 
                 dbTransaction.Commit();
