@@ -8,7 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.9.5" />
-    <PackageReference Include="ServiceStack" Version="5.7.0" />
+    <PackageReference Include="ServiceStack" Version="5.9.2" />
     <PackageReference Include="ServiceStack.Admin" Version="5.7.0" />
     <PackageReference Include="ServiceStack.Api.OpenApi" Version="5.7.0" />
     <PackageReference Include="ServiceStack.Api.Swagger" Version="5.7.0" />
